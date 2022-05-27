@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\aiden\\source\\repos\\CAB301Project\\CAB301Project\\CAB301Project.csproj": {}
+    "D:\\UNI\\Cab301(Algorithms)\\Assignment3\\CAB301-A3-DVD-Project\\CAB301Project\\CAB301Project\\CAB301Project.csproj": {}
   },
   "projects": {
-    "C:\\Users\\aiden\\source\\repos\\CAB301Project\\CAB301Project\\CAB301Project.csproj": {
+    "D:\\UNI\\Cab301(Algorithms)\\Assignment3\\CAB301-A3-DVD-Project\\CAB301Project\\CAB301Project\\CAB301Project.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\aiden\\source\\repos\\CAB301Project\\CAB301Project\\CAB301Project.csproj",
+        "projectUniqueName": "D:\\UNI\\Cab301(Algorithms)\\Assignment3\\CAB301-A3-DVD-Project\\CAB301Project\\CAB301Project\\CAB301Project.csproj",
         "projectName": "CAB301Project",
-        "projectPath": "C:\\Users\\aiden\\source\\repos\\CAB301Project\\CAB301Project\\CAB301Project.csproj",
-        "packagesPath": "C:\\Users\\aiden\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\aiden\\source\\repos\\CAB301Project\\CAB301Project\\obj\\",
+        "projectPath": "D:\\UNI\\Cab301(Algorithms)\\Assignment3\\CAB301-A3-DVD-Project\\CAB301Project\\CAB301Project\\CAB301Project.csproj",
+        "packagesPath": "C:\\Users\\Liam Agius\\.nuget\\packages\\",
+        "outputPath": "D:\\UNI\\Cab301(Algorithms)\\Assignment3\\CAB301-A3-DVD-Project\\CAB301Project\\CAB301Project\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\aiden\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Liam Agius\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,8 +22,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {},
-          "https://nuget.emzi0767.com/api/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net5.0": {
@@ -55,7 +54,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.300\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     }
