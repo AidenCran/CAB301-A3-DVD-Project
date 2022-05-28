@@ -44,7 +44,6 @@ namespace CAB301Project
             Console.WriteLine("6) Display all members who are currently renting a particuler movie");
             Console.WriteLine("0) Return to the main menu");
 
-
         }
 
         public static void DisplayMember()
@@ -82,6 +81,8 @@ namespace CAB301Project
 
         public void StaffController()
         {
+            DisplayStaffMember();
+
             string userInputText = Console.ReadLine();
             int userInput = int.Parse(userInputText);
 
@@ -109,6 +110,8 @@ namespace CAB301Project
 
         }
 
+
+        #region StaffMember
         public void AddMovie(MovieCollection movieCollection)
         {
             //WARNING: no misinput checks
@@ -116,49 +119,92 @@ namespace CAB301Project
             string userTitle = Console.ReadLine();
 
             IMovie titleSearch = movieCollection.Search(userTitle);
+            
             if (titleSearch != null)
             {
                 Console.WriteLine($"DVD {titleSearch} exists!");
-                Console.WriteLine($"Total Copies of DVD is {titleSearch.TotalCopies}, would you like to add more?");
+                Console.WriteLine($"Total Copies of DVD is {titleSearch.TotalCopies}, to add more input a number, if you want none added input 0");
                 //need to add the add to total copies function here
+                string userInputTC = Console.ReadLine();
+                int userInputTCInt = int.Parse(userInputTC);
+
+                titleSearch.TotalCopies += userInputTCInt;
+
+            }
+            else
+            {
+                Console.WriteLine("Please set a Genre using the numbers indicated below");
+                Console.WriteLine("Action = 1");
+                Console.WriteLine("Comedy = 2");
+                Console.WriteLine("History = 3");
+                Console.WriteLine("Drama = 4");
+                Console.WriteLine("Western = 5");
+                string userGenre = Console.ReadLine();
+                MovieGenre userGenreTest;
+                int userGenreInt = int.Parse(userGenre);
+                userGenreTest = FindGenre(userGenreInt);
+
+
+                Console.WriteLine("Please set a Classification using the numbers indicated below");
+                Console.WriteLine("G = 1");
+                Console.WriteLine("PG = 2");
+                Console.WriteLine("M = 3");
+                Console.WriteLine("M15Plus = 4");
+                string userClassification = Console.ReadLine();
+                MovieClassification movieClass;
+                int userClassificationInt = int.Parse(userClassification);
+                movieClass = FindClassification(userClassificationInt);
+
+
+                Console.WriteLine("Please enter Duration of the DVD");
+                string userDuration = Console.ReadLine();
+                int userDurationInt = int.Parse(userDuration);
+
+                Console.WriteLine("Please enter Total Copies of DVD");
+                string userTotalCopies = Console.ReadLine();
+                int userTotalCopiesInt = int.Parse(userTotalCopies);
+
+                var movie = new Movie(userTitle, userGenreTest, movieClass, userDurationInt, userTotalCopiesInt);
+                movieCollection.Insert(movie);
+
+
+
 
             }
 
-            Console.WriteLine("Please set a Genre using the numbers indicated below");
-            Console.WriteLine("Action = 1");
-            Console.WriteLine("Comedy = 2");
-            Console.WriteLine("History = 3");
-            Console.WriteLine("Drama = 4");
-            Console.WriteLine("Western = 5");
-            string userGenre = Console.ReadLine();
-            MovieGenre userGenreTest;
-            int userGenreInt = int.Parse(userGenre);
-            userGenreTest = FindGenre(userGenreInt);
-            
-
-            Console.WriteLine("Please set a Classification using the numbers indicated below");
-            Console.WriteLine("G = 1");
-            Console.WriteLine("PG = 2");
-            Console.WriteLine("M = 3");
-            Console.WriteLine("M15Plus = 4");
-            string userClassification = Console.ReadLine();
-            MovieClassification movieClass;
-            int userClassificationInt = int.Parse(userClassification);
-            movieClass = FindClassification(userClassificationInt);
-
-
-            Console.WriteLine("Please enter Duration of the DVD");
-            string userDuration = Console.ReadLine();
-            int userDurationInt = int.Parse(userDuration);
-
-            Console.WriteLine("Please enter Total Copies of DVD");
-            string userTotalCopies = Console.ReadLine();
-            int userTotalCopiesInt = int.Parse(userTotalCopies);
-
-            var movie = new Movie(userTitle, userGenreTest, movieClass, userDurationInt, userTotalCopiesInt);
-            movieCollection.Insert(movie);
 
         }
+
+
+        public void RemoveMovie(MovieCollection movieCollection)
+        {
+            Console.WriteLine("Please enter in the title of the DVD you want to remove");
+
+            string userInputString = Console.ReadLine();
+
+            IMovie movie = movieCollection.Search(userInputString);
+
+            
+
+            if (movie != null && movie.AvailableCopies > 0)
+            {
+                movie.AvailableCopies -= 1;
+            }
+            else if (movie == null)
+            {
+                Console.WriteLine("Movie Does not exists");
+                StaffController();
+            }
+
+            if (movie.AvailableCopies == 0)
+            {
+                Console.WriteLine($"Movie {movie.Title} has been removed");
+                movieCollection.Delete(movie);
+            }
+        }
+        #endregion
+
+        #region Utility
         /// <summary>
         /// Input user Generated number to indicate what the classification is
         /// </summary>
@@ -224,6 +270,6 @@ namespace CAB301Project
             return 0;
 
         }
-
+        #endregion
     }
 }
