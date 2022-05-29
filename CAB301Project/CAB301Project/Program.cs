@@ -8,7 +8,7 @@ namespace CAB301Project
         static void Main(string[] args)
         {
             MovieCollection movieCollection = new MovieCollection();
-
+            MemberCollection memberCollection = new MemberCollection(50);
 
             
 
@@ -175,17 +175,19 @@ namespace CAB301Project
 
         }
 
-
         public void RemoveMovie(MovieCollection movieCollection)
         {
+
             Console.WriteLine("Please enter in the title of the DVD you want to remove");
 
             string userInputString = Console.ReadLine();
 
             IMovie movie = movieCollection.Search(userInputString);
 
-            
 
+            //===========WARNING==================
+            //May need to alter the total copies instead of available copies
+            //===========WARNING==================
             if (movie != null && movie.AvailableCopies > 0)
             {
                 movie.AvailableCopies -= 1;
@@ -202,6 +204,39 @@ namespace CAB301Project
                 movieCollection.Delete(movie);
             }
         }
+
+        public void RegisterMember(MemberCollection memberCollection)
+        {
+            Console.WriteLine("Please Enter a Firstname");
+            string userFirstName = Console.ReadLine();
+            Console.WriteLine("Please Enter a Lastname");
+            string userLastName = Console.ReadLine();
+            Console.WriteLine("Please enter a correct Phone number");
+            string userPhonenumber = Console.ReadLine();
+            Console.WriteLine("Please enter a password");
+            string userPassword = Console.ReadLine();
+
+            //IMember test = mem;
+
+            if (!IMember.IsValidContactNumber(userPhonenumber))
+            {
+                Console.WriteLine("ERROR:Given phonenumber is incorrect");
+                RegisterMember(memberCollection);
+
+            }
+
+            if (!IMember.IsValidPin(userPassword))
+            {
+                Console.WriteLine("ERROR:Incorrect format for password");
+                RegisterMember(memberCollection);
+            }
+            
+            var member = new Member(userFirstName, userLastName, userPhonenumber, userPassword);
+            memberCollection.Add(member);
+            Console.WriteLine($"Member {userFirstName} {userLastName} has been added to database");
+
+        }
+
         #endregion
 
         #region Utility
