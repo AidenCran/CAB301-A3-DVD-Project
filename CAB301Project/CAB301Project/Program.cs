@@ -10,12 +10,9 @@ namespace CAB301Project
             MovieCollection movieCollection = new MovieCollection();
             MemberCollection memberCollection = new MemberCollection(50);
 
-            
-
-
-
 
         }
+
 
         public static void Display()
         {
@@ -134,11 +131,11 @@ namespace CAB301Project
             else
             {
                 Console.WriteLine("Please set a Genre using the numbers indicated below");
-                Console.WriteLine("Action = 1");
-                Console.WriteLine("Comedy = 2");
-                Console.WriteLine("History = 3");
-                Console.WriteLine("Drama = 4");
-                Console.WriteLine("Western = 5");
+                Console.WriteLine("1) Action");
+                Console.WriteLine("2) Comedy");
+                Console.WriteLine("3) History");
+                Console.WriteLine("4) Drama");
+                Console.WriteLine("5) Western");
                 string userGenre = Console.ReadLine();
                 MovieGenre userGenreTest;
                 int userGenreInt = int.Parse(userGenre);
@@ -146,10 +143,10 @@ namespace CAB301Project
 
 
                 Console.WriteLine("Please set a Classification using the numbers indicated below");
-                Console.WriteLine("G = 1");
-                Console.WriteLine("PG = 2");
-                Console.WriteLine("M = 3");
-                Console.WriteLine("M15Plus = 4");
+                Console.WriteLine("1) G");
+                Console.WriteLine("2) PG");
+                Console.WriteLine("3) M");
+                Console.WriteLine("4) M15Plus");
                 string userClassification = Console.ReadLine();
                 MovieClassification movieClass;
                 int userClassificationInt = int.Parse(userClassification);
@@ -166,9 +163,6 @@ namespace CAB301Project
 
                 var movie = new Movie(userTitle, userGenreTest, movieClass, userDurationInt, userTotalCopiesInt);
                 movieCollection.Insert(movie);
-
-
-
 
             }
 
