@@ -299,6 +299,62 @@ namespace CAB301Project
             return 0;
 
         }
+
+
+        private static int GetInt(string prompt, int min, int max)
+        {
+            if (min > max)
+            {
+                int t = min;
+                min = max;
+                max = t;
+            }
+
+            while (true)
+            {
+                int result = GetInt(prompt);
+
+                if (min <= result && result <= max)
+                {
+                    return result;
+                }
+                else
+                {
+                    Error("Supplied value is out of range");
+                }
+            }
+        }
+
+        private static int GetInt(string prompt)
+        {
+            while (true)
+            {
+                string response = GetInput(prompt);
+
+                int result;
+
+                if (int.TryParse(response, out result))
+                {
+                    return result;
+                }
+                else
+                {
+                    Error("Supplied value is not an integer");
+                }
+            }
+        }
+
+        private static string GetInput(string prompt)
+        {
+            Console.WriteLine("{0}:", prompt);
+            return Console.ReadLine();
+        }
+
+        private static void Error(string msg)
+        {
+            Console.WriteLine($"{msg}, please try again");
+            Console.WriteLine();
+        }
         #endregion
     }
 }
