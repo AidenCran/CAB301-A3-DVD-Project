@@ -5,16 +5,17 @@ namespace CAB301Project
 {
     class Program
     {
+        MovieCollection movieCollection = new MovieCollection();
+        MemberCollection memberCollection = new MemberCollection(50);
         static void Main(string[] args)
         {
-            MovieCollection movieCollection = new MovieCollection();
-            MemberCollection memberCollection = new MemberCollection(50);
-
+            Program program = new Program();
+            program.Display();
 
         }
 
 
-        public static void Display()
+        public void Display()
         {
             Console.WriteLine("====================================================");
             Console.WriteLine("Welcome to Community Library Movie DVD Management System");
@@ -26,9 +27,12 @@ namespace CAB301Project
             Console.WriteLine("2) Member Login");
             Console.WriteLine("0) Exit");
 
+            //log in controller
+            LoginController();
+            
         }
 
-        public static void DisplayStaffMember()
+        public void DisplayStaffMember()
         {
             Console.WriteLine("====================Staff Menu=======================");
             
@@ -40,10 +44,10 @@ namespace CAB301Project
             Console.WriteLine("5) Display a member's contact phone number, given the member's name");
             Console.WriteLine("6) Display all members who are currently renting a particuler movie");
             Console.WriteLine("0) Return to the main menu");
-
+            
         }
 
-        public static void DisplayMember()
+        public void DisplayMember()
         {
             Console.WriteLine("====================Member Menu=======================");
 
@@ -55,18 +59,21 @@ namespace CAB301Project
             Console.WriteLine("5) List current borrowing movies");
             Console.WriteLine("6) Display the top 3 movies rented by the members");
             Console.WriteLine("0) Return to the main menu");
+
+            
         }
 
         public void LoginController()
         {
             string userInputext = Console.ReadLine();
-            int userinput = int.Parse(userInputext);
-           
+            int userinput = GetInt(userInputext,0 ,2);
+
 
             switch (userinput)
             {
                 case 1:
-                    
+                    StaffController();
+                    break;
                 case 2:
 
                 case 0:
@@ -81,15 +88,19 @@ namespace CAB301Project
             DisplayStaffMember();
 
             string userInputText = Console.ReadLine();
-            int userInput = int.Parse(userInputText);
+            int userInput = GetInt(userInputText,0 ,6);
 
 
             switch (userInput)
             {
                 case 1:
-
+                    AddMovie(movieCollection);
+                    DisplayStaffMember();
+                    StaffController();
+                    break;
                 case 2:
-
+                    RemoveMovie(movieCollection);
+                    break;
                 case 3:
 
                 case 4:
@@ -123,13 +134,15 @@ namespace CAB301Project
                 Console.WriteLine($"Total Copies of DVD is {titleSearch.TotalCopies}, to add more input a number, if you want none added input 0");
                 //need to add the add to total copies function here
                 string userInputTC = Console.ReadLine();
-                int userInputTCInt = int.Parse(userInputTC);
+                int userInputTCInt = GetInt(userInputTC);
 
                 titleSearch.TotalCopies += userInputTCInt;
 
             }
             else
             {
+
+                //Set the genre
                 Console.WriteLine("Please set a Genre using the numbers indicated below");
                 Console.WriteLine("1) Action");
                 Console.WriteLine("2) Comedy");
@@ -138,10 +151,10 @@ namespace CAB301Project
                 Console.WriteLine("5) Western");
                 string userGenre = Console.ReadLine();
                 MovieGenre userGenreTest;
-                int userGenreInt = int.Parse(userGenre);
+                int userGenreInt = GetInt(userGenre,0 , 4);
                 userGenreTest = FindGenre(userGenreInt);
 
-
+                //Set the classification
                 Console.WriteLine("Please set a Classification using the numbers indicated below");
                 Console.WriteLine("1) G");
                 Console.WriteLine("2) PG");
@@ -149,21 +162,28 @@ namespace CAB301Project
                 Console.WriteLine("4) M15Plus");
                 string userClassification = Console.ReadLine();
                 MovieClassification movieClass;
-                int userClassificationInt = int.Parse(userClassification);
+                int userClassificationInt = GetInt(userClassification,0 ,3);
                 movieClass = FindClassification(userClassificationInt);
 
-
+                //Set Duration
                 Console.WriteLine("Please enter Duration of the DVD");
                 string userDuration = Console.ReadLine();
-                int userDurationInt = int.Parse(userDuration);
+                int userDurationInt = GetInt(userDuration);
 
+                //Set Total Copies
                 Console.WriteLine("Please enter Total Copies of DVD");
                 string userTotalCopies = Console.ReadLine();
-                int userTotalCopiesInt = int.Parse(userTotalCopies);
+                int userTotalCopiesInt = GetInt(userTotalCopies);
 
+                //Add the movie
                 var movie = new Movie(userTitle, userGenreTest, movieClass, userDurationInt, userTotalCopiesInt);
                 movieCollection.Insert(movie);
 
+
+                //Print Result
+                string movieResult = movie.ToString();
+                Console.WriteLine($"{movieResult} has been added");
+                
             }
 
 
@@ -231,6 +251,18 @@ namespace CAB301Project
 
         }
 
+        public void RemoveMember(MemberCollection memberCollection)
+        {
+            Console.WriteLine("Please Enter the first name of the member being removed");
+            string UserInputFirstName = Console.ReadLine();
+            Console.WriteLine("Please Enter the last name of the member being removed");
+            string UserInputLastName = Console.ReadLine();
+
+            Member member = new Member(UserInputFirstName, UserInputLastName);
+
+
+
+        }
         #endregion
 
         #region Utility
