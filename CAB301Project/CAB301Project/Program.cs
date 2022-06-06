@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace CAB301Project
 {
     class Program
     {
-        MovieCollection movieCollection = new MovieCollection();
+        MovieCollection communityLibrary = new MovieCollection();
         MemberCollection memberCollection = new MemberCollection(50);
+
         static void Main(string[] args)
         {
             Program program = new Program();
@@ -94,12 +96,12 @@ namespace CAB301Project
             switch (userInput)
             {
                 case 1:
-                    AddMovie(movieCollection);
+                    AddMovie(communityLibrary);
                     DisplayStaffMember();
                     StaffController();
                     break;
                 case 2:
-                    RemoveMovie(movieCollection);
+                    RemoveMovie(communityLibrary);
                     break;
                 case 3:
 
@@ -263,6 +265,47 @@ namespace CAB301Project
 
 
         }
+        #endregion
+
+        #region RegiisteredMember
+
+        void DisplayAllDVDs()
+        {
+            StringBuilder output = new StringBuilder();
+
+            foreach (Movie movie in communityLibrary.ToArray())
+            {
+                output.AppendLine(movie.ToString());
+            }
+
+            Console.WriteLine(output.ToString());
+
+            // Go Somewhere - E.g. Display.
+            DisplayMember();
+        }
+
+        void DisplayMovieInfo()
+        {
+            string title = Console.ReadLine();
+            IMovie movie = communityLibrary.Search(title);
+
+            if (movie == null)
+            {
+                Console.WriteLine("Movie not found!\n1) Retry\n2)Return");
+                int input = GetInt(Console.ReadLine(), 1, 2);
+                if (input == 1) { DisplayMovieInfo(); return; }
+                // Else
+                // More ideal to call previous display rather than first
+                DisplayMember();
+                return;
+            }
+
+            Console.WriteLine(movie.ToString());
+
+            // Go Somewhere - E.g. Display
+            DisplayMember();
+        }
+
         #endregion
 
         #region Utility
