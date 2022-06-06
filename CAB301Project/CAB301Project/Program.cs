@@ -9,19 +9,40 @@ namespace CAB301Project
         MovieCollection communityLibrary = new MovieCollection();
         MemberCollection memberCollection = new MemberCollection(50);
 
+        Menu menu = new Menu();
+
         static void Main(string[] args)
         {
             Program program = new Program();
-            program.Display();
+            program.Run();
+        }
 
+        /// <summary>
+        /// Creates Main Menu
+        /// </summary>
+        void Run()
+        {
+            menu.Add("Register User", Display);
+            //menu.Add("Login User", () => checkLoginUser());
+            menu.Add("Exit", () => Environment.Exit(0));
+            DisplayMainMenu();
+        }
+
+        /// <summary>
+        /// Displays Menu
+        /// </summary>
+        void DisplayMainMenu()
+        {
+            while (true)
+                menu.Display();
         }
 
 
         public void Display()
         {
-            Console.WriteLine("====================================================");
+            Console.WriteLine("======================================================");
             Console.WriteLine("Welcome to Community Library Movie DVD Management System");
-            Console.WriteLine("====================================================");
+            Console.WriteLine("======================================================");
 
             Console.WriteLine("====================Main Menu=======================");
 
