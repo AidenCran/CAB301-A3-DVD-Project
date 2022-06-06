@@ -267,7 +267,7 @@ namespace CAB301Project
         }
         #endregion
 
-        #region RegiisteredMember
+        #region RegisteredMember
 
         void DisplayAllDVDs()
         {
