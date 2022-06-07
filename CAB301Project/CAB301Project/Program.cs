@@ -6,18 +6,20 @@ namespace CAB301Project
 {
     class Program
     {
-        MovieCollection communityLibrary = new MovieCollection();
-        MemberCollection memberCollection = new MemberCollection(50);
+        MovieCollection _communityLibrary = new MovieCollection();
+        MemberCollection _memberCollection = new MemberCollection(50);
 
-        Menu menu = new Menu();
+        Menu _menu = new Menu();
+
+        Member _CurrentUser;
 
         static void Main(string[] args)
         {
             Program program = new Program();
 
-            program.communityLibrary.Insert(new Movie("A"));
-            program.communityLibrary.Insert(new Movie("B"));
-            program.communityLibrary.Insert(new Movie("C"));
+            program._communityLibrary.Insert(new Movie("A"));
+            program._communityLibrary.Insert(new Movie("B"));
+            program._communityLibrary.Insert(new Movie("C"));
 
             program.Run();
         }
@@ -27,18 +29,16 @@ namespace CAB301Project
         /// </summary>
         void Run()
         {
-            Console.WriteLine("======================================================");
+            Console.WriteLine("========================================================");
             Console.WriteLine("Welcome to Community Library Movie DVD Management System");
-            Console.WriteLine("======================================================");
+            Console.WriteLine("========================================================\n");
 
-            Console.WriteLine("====================Main Menu=======================");
+            Console.WriteLine("======================= Main Menu ======================\n");
 
-            menu.Add("Staff Login", DisplayStaffMember);
-            menu.Add("Member Login", DisplayMember);
-            menu.Add("Exit", () => Environment.Exit(0));
+            _menu.Add("Staff Login", DisplayStaffMember);
+            _menu.Add("Member Login", DisplayMember);
+            _menu.Add("Exit", () => Environment.Exit(0));
 
-            menu.Add("Display All Movies", DisplayAllDVDs);
-            menu.Add("Display Movie Info", DisplayMovieInfo);
             DisplayMainMenu();
         }
 
@@ -48,22 +48,22 @@ namespace CAB301Project
         void DisplayMainMenu()
         {
             while (true)
-                menu.Display();
+                _menu.Display();
         }
 
         public void DisplayStaffMember()
         {
             Menu submenu = new Menu();
-
+            Console.Clear();
             UserInterface.Message("====================Staff Menu=======================");
 
-            submenu.Add("Add new DVDs of new movie to the system", menu.Display);
-            submenu.Add("Remove DVDS of a movie from the system", menu.Display);
-            submenu.Add("Register a new member with the system", menu.Display);
-            submenu.Add("Remove a registered member from the system", menu.Display);
-            submenu.Add("Display a member's contact phone number, given the member's name", menu.Display);
-            submenu.Add("Display all members who are currently renting a particuler movie", menu.Display);
-            submenu.Add("Return to the main menu", menu.Display);
+            submenu.Add("Add new DVDs of new movie to the system", _menu.Display);
+            submenu.Add("Remove DVDS of a movie from the system", _menu.Display);
+            submenu.Add("Register a new member with the system", _menu.Display);
+            submenu.Add("Remove a registered member from the system", _menu.Display);
+            submenu.Add("Display a member's contact phone number, given the member's name", _menu.Display);
+            submenu.Add("Display all members who are currently renting a particuler movie", _menu.Display);
+            submenu.Add("Return to the main menu", _menu.Display);
 
             submenu.Display();
         }
@@ -71,58 +71,20 @@ namespace CAB301Project
         public void DisplayMember()
         {
             Menu submenu = new Menu();
-
+            Console.Clear();
             UserInterface.Message("====================Member Menu=======================");
 
-            submenu.Add("Browse all the movies", menu.Display);
-            submenu.Add("Display all the information about a movie, given the title of the movie", menu.Display);
-            submenu.Add("Borrow a movie DVD", menu.Display);
-            submenu.Add("Return a movie DVD", menu.Display);
-            submenu.Add("List current borrowing movies", menu.Display);
-            submenu.Add("Display the top 3 movies rented by the members", menu.Display);
-            submenu.Add("Return to the main menu", menu.Display);
+            submenu.Add("Browse all the movies", DisplayAllDVDs);
+            submenu.Add("Display all the information about a movie, given the title of the movie", DisplayMovieInfo);
+            submenu.Add("Borrow a movie DVD", MemberBorrowMovie);
+            submenu.Add("Return a movie DVD", MemberReturnMovie);
+            submenu.Add("List current borrowing movies", MemberDisplayBorrowedMovies);
+            // \/ \/ \/ \/ \/
+            submenu.Add("Display the top 3 movies rented by the members", _menu.Display);
+            submenu.Add("Return to the main menu", _menu.Display);
 
             submenu.Display();
         }
-
-        #region To Be Removed
-
-        //public void StaffController()
-        //{
-        //    DisplayStaffMember();
-
-        //    string userInputText = Console.ReadLine();
-        //    int userInput = GetInt(userInputText,0 ,6);
-
-
-        //    switch (userInput)
-        //    {
-        //        case 1:
-        //            AddMovie(communityLibrary);
-        //            DisplayStaffMember();
-        //            StaffController();
-        //            break;
-        //        case 2:
-        //            RemoveMovie(communityLibrary);
-        //            break;
-        //        case 3:
-
-        //        case 4:
-
-        //        case 5:
-
-        //        case 6:
-
-        //        case 0:
-
-
-        //        default:
-        //            break;
-        //    }
-
-        //}
-
-        #endregion
 
         #region StaffMember
         public void AddMovie(MovieCollection movieCollection)
@@ -146,7 +108,6 @@ namespace CAB301Project
             }
             else
             {
-
                 //Set the genre
                 Console.WriteLine("Please set a Genre using the numbers indicated below");
                 Console.WriteLine("1) Action");
@@ -184,19 +145,14 @@ namespace CAB301Project
                 var movie = new Movie(userTitle, userGenreTest, movieClass, userDurationInt, userTotalCopiesInt);
                 movieCollection.Insert(movie);
 
-
                 //Print Result
                 string movieResult = movie.ToString();
-                Console.WriteLine($"{movieResult} has been added");
-                
+                Console.WriteLine($"{movieResult} has been added");   
             }
-
-
         }
 
         public void RemoveMovie(MovieCollection movieCollection)
         {
-
             Console.WriteLine("Please enter in the title of the DVD you want to remove");
 
             string userInputString = Console.ReadLine();
@@ -274,8 +230,6 @@ namespace CAB301Project
                
 
             }
-
-
         }
 
         public void DisplayMembersPhoneNumber(MemberCollection memberCollection)
@@ -296,7 +250,6 @@ namespace CAB301Project
             
             //Display PhoneNumber
             Console.WriteLine($"The members Contact number is {userMember.ContactNumber}");
-
         }
 
         public void DisplayMembersRentingMovie(MovieCollection movieCollection)
@@ -314,9 +267,7 @@ namespace CAB301Project
                 //this may not work. might only return one name at the top of borrowers
                 //will need fixing
                 movie.Borrowers.ToString();
-                
             }
-
         }
 
 
@@ -324,6 +275,9 @@ namespace CAB301Project
 
         #region RegisteredMember
 
+        /// <summary>
+        /// Displays all catalogued movies in alphabetical order
+        /// </summary>
         void DisplayAllDVDs()
         {
             Menu submenu = new Menu();
@@ -333,17 +287,17 @@ namespace CAB301Project
 
             output.AppendLine("All Catalogued DVDs in Alphabetical Order\n");
 
-            foreach (Movie movie in communityLibrary.ToArray())
+            foreach (Movie movie in _communityLibrary.ToArray())
             {
                 output.AppendLine(movie.ToString());
             }
 
-            Console.WriteLine(output.ToString());
-
-            // Return To Menu
-            menu.Display();
+            UserInterface.Message(output.ToString());
         }
 
+        /// <summary>
+        /// Given a valid input, displays information about a given movie
+        /// </summary>
         void DisplayMovieInfo()
         {
             Menu submenu = new Menu();
@@ -352,26 +306,82 @@ namespace CAB301Project
             UserInterface.Message("Please Insert a Movie Title");
 
             string title = Console.ReadLine();
-            IMovie movie = communityLibrary.Search(title);
+            IMovie movie = _communityLibrary.Search(title);
 
-            if (movie == null)
-            {
-                UserInterface.Error("Movie not found!");
+            if (movie == null)  { DisplayInvalidInput(DisplayMovieInfo); }
+            else                { UserInterface.Message("\n" + movie.ToString()); }
+        }
 
-                submenu.Add("Retry", DisplayMovieInfo);
-                submenu.Add("Return", menu.Display);
-                submenu.Display();
-            }
-            else
+        /// <summary>
+        /// Allows a user to borrow a valid movie
+        /// </summary>
+        void MemberBorrowMovie()
+        {
+            Menu submenu = new Menu();
+            Console.Clear();
+
+            UserInterface.Message("Please Enter a Title to Borrow");
+
+            DisplayAllDVDs();
+
+            string title = Console.ReadLine();
+            IMovie movie = _communityLibrary.Search(title);
+
+            if (movie == null)  { DisplayInvalidInput(MemberBorrowMovie); }
+            else                { movie.AddBorrower(_CurrentUser); }
+        }
+
+        /// <summary>
+        /// Allows a user to return a valid movie
+        /// </summary>
+        void MemberReturnMovie()
+        {
+            Menu submenu = new Menu();
+            Console.Clear();
+
+            UserInterface.Message("Please Enter a Title to Return");
+
+            DisplayAllDVDs();
+
+            string title = Console.ReadLine();
+            IMovie movie = _communityLibrary.Search(title);
+
+            if (movie == null)  { DisplayInvalidInput(MemberReturnMovie); }
+            else                { movie.RemoveBorrower(_CurrentUser); }
+        }
+
+        /// <summary>
+        /// Displays all movies the selected user currently borrows
+        /// </summary>
+        void MemberDisplayBorrowedMovies()
+        {
+            StringBuilder output = new StringBuilder();
+
+            foreach (var movie in _communityLibrary.ToArray())
             {
-                Console.WriteLine(movie.ToString());
-                menu.Display();
+                if (movie.Borrowers.Search(_CurrentUser))
+                {
+                    output.AppendLine(movie.ToString());
+                }
             }
+
+            Console.WriteLine(output.ToString());
         }
 
         #endregion
 
         #region Utility
+
+        void DisplayInvalidInput(Action action)
+        {
+            Menu submenu = new Menu();
+            UserInterface.Error("Object Not Found!");
+
+            submenu.Add("Retry", action);
+            submenu.Add("Return", _menu.Display);
+            submenu.Display();
+        }
+
         /// <summary>
         /// Input user Generated number to indicate what the classification is
         /// </summary>

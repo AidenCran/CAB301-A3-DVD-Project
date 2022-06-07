@@ -23,7 +23,7 @@ class MemberCollection : IMemberCollection
     // post-condition: return the number of members in this member collection and this member collection remains unchanged
     public int Number { get { return count; } }
 
-   
+    //public Member[] Members => members;
 
 
     // Constructor - to create an object of member collection 

@@ -19,6 +19,8 @@ public interface IMemberCollection
         get;
     }
 
+    //public Member[] Members { get; }
+
     // Check if this member collection is full
     // Pre-condition: nil
     // Post-condition: return ture if this member collection is full; otherwise return false.
