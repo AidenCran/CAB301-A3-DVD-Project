@@ -140,6 +140,33 @@ class MemberCollection : IMemberCollection
         return false;
     }
 
+    public Member SearchMember(IMember member)
+    {
+        int left = 0;
+        int right = count - 1;
+
+        //while (left + 1 < right)
+        //{
+        //    int middle = (left + right) / 2;
+
+        //    if (members[middle].CompareTo((Member)member) == 0) { Console.WriteLine("Member Found!"); return true; }
+        //    if (members[middle].CompareTo((Member)member) == -1) { left = middle; }
+        //    if (members[middle].CompareTo((Member)member) == 1) { right = middle; }
+        //}
+
+        while (left <= right)
+        {
+            int m = (left + right) / 2;
+            if (members[m].CompareTo((Member)member) == 0) { return members[m]; }
+            if (members[m].CompareTo((Member)member) == -1) { left = m + 1; }
+            if (members[m].CompareTo((Member)member) == 1) { right = m - 1; }
+        }
+
+        return null;
+    }
+
+
+
     // Remove all the members in this member collection
     // Pre-condition: nil
     // Post-condition: no member in this member collection 

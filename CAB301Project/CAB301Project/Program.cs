@@ -263,11 +263,63 @@ namespace CAB301Project
             Console.WriteLine("Please Enter the last name of the member being removed");
             string UserInputLastName = Console.ReadLine();
 
-            Member member = new Member(UserInputFirstName, UserInputLastName);
+            IMember member = new Member(UserInputFirstName, UserInputLastName);
+            Member UserMember;
+            //memberCollection.Search(member);
+            if (memberCollection.Search(member))
+            {
 
+                //memberCollection.
+               UserMember = memberCollection.SearchMember(member);
+               
+
+            }
 
 
         }
+
+        public void DisplayMembersPhoneNumber(MemberCollection memberCollection)
+        {
+            //Firstname Prompt
+            string FirstNamePrompt = "Please enter the members firstname";
+            string userFirstName = UserInterface.GetInput(FirstNamePrompt);
+            
+            //Lastname Prompt
+            string LastNamePrompt = "Please enter the members Lastname";
+            string userLastName = UserInterface.GetInput(LastNamePrompt);
+            
+            //make a object to search for
+            IMember member = new Member(userFirstName, userLastName);
+            
+            //this new object equals found object
+            Member userMember = memberCollection.SearchMember(member);
+            
+            //Display PhoneNumber
+            Console.WriteLine($"The members Contact number is {userMember.ContactNumber}");
+
+        }
+
+        public void DisplayMembersRentingMovie(MovieCollection movieCollection)
+        {
+            string movieTitlePrompt = "Please enter the title of the movie you wish to view";
+            string movieTitle = UserInterface.GetInput(movieTitlePrompt);
+            IMovie movie = movieCollection.Search(movieTitle);
+
+            if (movie == null)
+            {
+                Console.WriteLine("That movie doesnt exist");
+            }
+            else
+            {
+                //this may not work. might only return one name at the top of borrowers
+                //will need fixing
+                movie.Borrowers.ToString();
+                
+            }
+
+        }
+
+
         #endregion
 
         #region RegisteredMember
