@@ -11,7 +11,7 @@ namespace CAB301Project
 
         Menu _menu = new Menu();
 
-        Member _CurrentUser;
+        Member _currentUser;
 
         static void Main(string[] args)
         {
@@ -57,12 +57,12 @@ namespace CAB301Project
             Console.Clear();
             UserInterface.Message("====================Staff Menu=======================");
 
-            submenu.Add("Add new DVDs of new movie to the system", _menu.Display);
-            submenu.Add("Remove DVDS of a movie from the system", _menu.Display);
-            submenu.Add("Register a new member with the system", _menu.Display);
-            submenu.Add("Remove a registered member from the system", _menu.Display);
-            submenu.Add("Display a member's contact phone number, given the member's name", _menu.Display);
-            submenu.Add("Display all members who are currently renting a particuler movie", _menu.Display);
+            submenu.Add("Add new DVDs of new movie to the system", AddMovie);
+            submenu.Add("Remove DVDS of a movie from the system", RemoveMovie);
+            submenu.Add("Register a new member with the system", RegisterMember);
+            submenu.Add("Remove a registered member from the system", RemoveMember);
+            submenu.Add("Display a member's contact phone number, given the member's name", DisplayMembersPhoneNumber);
+            submenu.Add("Display all members who are currently renting a particuler movie", DisplayMembersRentingMovie);
             submenu.Add("Return to the main menu", _menu.Display);
 
             submenu.Display();
@@ -87,78 +87,66 @@ namespace CAB301Project
         }
 
         #region StaffMember
-        public void AddMovie(MovieCollection movieCollection)
+        public void AddMovie()
         {
-            //WARNING: no misinput checks
-            Console.WriteLine("Please Enter Movie Title");
-            string userTitle = Console.ReadLine();
+            Console.Clear();
 
-            IMovie titleSearch = movieCollection.Search(userTitle);
+            Menu submenu = new Menu();
+            UserInterface.Message("Please Enter Movie Title");
+
+            IMovie titleSearch = _communityLibrary.Search(Console.ReadLine());
             
             if (titleSearch != null)
             {
-                Console.WriteLine($"DVD {titleSearch} exists!");
-                Console.WriteLine($"Total Copies of DVD is {titleSearch.TotalCopies}, to add more input a number, if you want none added input 0");
+                UserInterface.Message($"DVD {titleSearch} exists!");
+                UserInterface.Message($"Total Copies of DVD is {titleSearch.TotalCopies}.\n");
+                
                 //need to add the add to total copies function here
-                string userInputTC = Console.ReadLine();
-                int userInputTCInt = GetInt(userInputTC);
-
-                titleSearch.TotalCopies += userInputTCInt;
-
+                titleSearch.TotalCopies += UserInterface.GetInteger("Please enter amount to add!");
             }
             else
             {
-                //Set the genre
-                Console.WriteLine("Please set a Genre using the numbers indicated below");
-                Console.WriteLine("1) Action");
-                Console.WriteLine("2) Comedy");
-                Console.WriteLine("3) History");
-                Console.WriteLine("4) Drama");
-                Console.WriteLine("5) Western");
-                string userGenre = Console.ReadLine();
-                MovieGenre userGenreTest;
-                int userGenreInt = GetInt(userGenre,0 , 4);
-                userGenreTest = FindGenre(userGenreInt);
+                MovieGenre selectedGenre = new MovieGenre();
+                UserInterface.Message("Please Select a Genre");
+                Menu genreMenu = new Menu();
+                genreMenu.Add("Action", ()=> selectedGenre = MovieGenre.Action);
+                genreMenu.Add("Comedy", ()=> selectedGenre = MovieGenre.Comedy);
+                genreMenu.Add("History", ()=> selectedGenre = MovieGenre.History);
+                genreMenu.Add("Drama", ()=> selectedGenre = MovieGenre.Drama);
+                genreMenu.Add("Western", ()=> selectedGenre = MovieGenre.Western);
+                genreMenu.Display();
 
-                //Set the classification
-                Console.WriteLine("Please set a Classification using the numbers indicated below");
-                Console.WriteLine("1) G");
-                Console.WriteLine("2) PG");
-                Console.WriteLine("3) M");
-                Console.WriteLine("4) M15Plus");
-                string userClassification = Console.ReadLine();
-                MovieClassification movieClass;
-                int userClassificationInt = GetInt(userClassification,0 ,3);
-                movieClass = FindClassification(userClassificationInt);
 
-                //Set Duration
-                Console.WriteLine("Please enter Duration of the DVD");
-                string userDuration = Console.ReadLine();
-                int userDurationInt = GetInt(userDuration);
+                MovieClassification selectedClass = new MovieClassification();
+                UserInterface.Message("Please Select a Classification");
+                Menu classMenu = new Menu();
+                classMenu.Add("G", ()=> selectedClass = MovieClassification.G);
+                classMenu.Add("PG", ()=> selectedClass = MovieClassification.PG);
+                classMenu.Add("M", ()=> selectedClass = MovieClassification.M);
+                classMenu.Add("M15 Plus", ()=> selectedClass = MovieClassification.M15Plus);
+                classMenu.Display();
 
-                //Set Total Copies
-                Console.WriteLine("Please enter Total Copies of DVD");
-                string userTotalCopies = Console.ReadLine();
-                int userTotalCopiesInt = GetInt(userTotalCopies);
+
+                int userDurationInt = UserInterface.GetInteger("Please enter Duration of the DVD");
+                int userTotalCopiesInt = UserInterface.GetInteger("Please enter Total Copies of DVD");
 
                 //Add the movie
-                var movie = new Movie(userTitle, userGenreTest, movieClass, userDurationInt, userTotalCopiesInt);
-                movieCollection.Insert(movie);
+                var movie = new Movie(titleSearch.Title, selectedGenre, selectedClass, userDurationInt, userTotalCopiesInt);
+                _communityLibrary.Insert(movie);
+
 
                 //Print Result
                 string movieResult = movie.ToString();
-                Console.WriteLine($"{movieResult} has been added");   
+                UserInterface.SuccessfulAction($"\n{movieResult} has been added");   
             }
         }
 
-        public void RemoveMovie(MovieCollection movieCollection)
+        public void RemoveMovie()
         {
-            Console.WriteLine("Please enter in the title of the DVD you want to remove");
+            Console.Clear();
+            UserInterface.Message("Please enter in the title of the DVD you want to remove");
 
-            string userInputString = Console.ReadLine();
-
-            IMovie movie = movieCollection.Search(userInputString);
-
+            IMovie movie = _communityLibrary.Search(Console.ReadLine());
 
             //===========WARNING==================
             //May need to alter the total copies instead of available copies
@@ -166,22 +154,25 @@ namespace CAB301Project
             if (movie != null && movie.AvailableCopies > 0)
             {
                 movie.AvailableCopies -= 1;
+
+                // CHECK
+                UserInterface.SuccessfulAction("Movie Deincremented");
             }
             else if (movie == null)
             {
-                Console.WriteLine("Movie Does not exists");
-                //StaffController();
+                UserInterface.Error("Movie Does not exists");
             }
-
             if (movie.AvailableCopies == 0)
             {
-                Console.WriteLine($"Movie {movie.Title} has been removed");
-                movieCollection.Delete(movie);
+                UserInterface.SuccessfulAction($"Movie {movie.Title} has been removed");
+                _communityLibrary.Delete(movie);
             }
         }
 
-        public void RegisterMember(MemberCollection memberCollection)
+        public void RegisterMember()
         {
+            Console.Clear();
+
             Console.WriteLine("Please Enter a Firstname");
             string userFirstName = Console.ReadLine();
             Console.WriteLine("Please Enter a Lastname");
@@ -191,28 +182,17 @@ namespace CAB301Project
             Console.WriteLine("Please enter a password");
             string userPassword = Console.ReadLine();
 
-            //IMember test = mem;
-
-            if (!IMember.IsValidContactNumber(userPhonenumber))
+            if (!IMember.IsValidContactNumber(userPhonenumber) || !IMember.IsValidPin(userPassword))
             {
-                Console.WriteLine("ERROR:Given phonenumber is incorrect");
-                RegisterMember(memberCollection);
-
-            }
-
-            if (!IMember.IsValidPin(userPassword))
-            {
-                Console.WriteLine("ERROR:Incorrect format for password");
-                RegisterMember(memberCollection);
+                DisplayInvalidInput(RegisterMember);
             }
             
             var member = new Member(userFirstName, userLastName, userPhonenumber, userPassword);
-            memberCollection.Add(member);
-            Console.WriteLine($"Member {userFirstName} {userLastName} has been added to database");
-
+            _memberCollection.Add(member);
+            UserInterface.SuccessfulAction($"Member {userFirstName} {userLastName} has been added to database");
         }
 
-        public void RemoveMember(MemberCollection memberCollection)
+        public void RemoveMember()
         {
             Console.WriteLine("Please Enter the first name of the member being removed");
             string UserInputFirstName = Console.ReadLine();
@@ -222,17 +202,17 @@ namespace CAB301Project
             IMember member = new Member(UserInputFirstName, UserInputLastName);
             Member UserMember;
             //memberCollection.Search(member);
-            if (memberCollection.Search(member))
+            if (_memberCollection.Search(member))
             {
 
-                //memberCollection.
-               UserMember = memberCollection.SearchMember(member);
+               //memberCollection.
+               UserMember = _memberCollection.SearchMember(member);
                
 
             }
         }
 
-        public void DisplayMembersPhoneNumber(MemberCollection memberCollection)
+        public void DisplayMembersPhoneNumber()
         {
             //Firstname Prompt
             string FirstNamePrompt = "Please enter the members firstname";
@@ -246,21 +226,21 @@ namespace CAB301Project
             IMember member = new Member(userFirstName, userLastName);
             
             //this new object equals found object
-            Member userMember = memberCollection.SearchMember(member);
+            Member userMember = _memberCollection.SearchMember(member);
             
             //Display PhoneNumber
             Console.WriteLine($"The members Contact number is {userMember.ContactNumber}");
         }
 
-        public void DisplayMembersRentingMovie(MovieCollection movieCollection)
+        public void DisplayMembersRentingMovie()
         {
             string movieTitlePrompt = "Please enter the title of the movie you wish to view";
             string movieTitle = UserInterface.GetInput(movieTitlePrompt);
-            IMovie movie = movieCollection.Search(movieTitle);
+            IMovie movie = _communityLibrary.Search(movieTitle);
 
             if (movie == null)
             {
-                Console.WriteLine("That movie doesnt exist");
+                UserInterface.Error("That movie doesnt exist");
             }
             else
             {
@@ -328,7 +308,7 @@ namespace CAB301Project
             IMovie movie = _communityLibrary.Search(title);
 
             if (movie == null)  { DisplayInvalidInput(MemberBorrowMovie); }
-            else                { movie.AddBorrower(_CurrentUser); }
+            else                { movie.AddBorrower(_currentUser); }
         }
 
         /// <summary>
@@ -347,7 +327,7 @@ namespace CAB301Project
             IMovie movie = _communityLibrary.Search(title);
 
             if (movie == null)  { DisplayInvalidInput(MemberReturnMovie); }
-            else                { movie.RemoveBorrower(_CurrentUser); }
+            else                { movie.RemoveBorrower(_currentUser); }
         }
 
         /// <summary>
@@ -359,13 +339,18 @@ namespace CAB301Project
 
             foreach (var movie in _communityLibrary.ToArray())
             {
-                if (movie.Borrowers.Search(_CurrentUser))
+                if (movie.Borrowers.Search(_currentUser))
                 {
                     output.AppendLine(movie.ToString());
                 }
             }
 
             Console.WriteLine(output.ToString());
+        }
+
+        void DisplayTopThree()
+        {
+
         }
 
         #endregion
@@ -382,127 +367,6 @@ namespace CAB301Project
             submenu.Display();
         }
 
-        /// <summary>
-        /// Input user Generated number to indicate what the classification is
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public MovieGenre FindGenre(int number)
-        {
-            MovieGenre userGenre;
-            switch (number)
-            {
-                case 1:
-                    userGenre = MovieGenre.Action;
-                    return userGenre;
-                case 2:
-                    userGenre = MovieGenre.Comedy;
-                    return userGenre;
-                case 3:
-                    userGenre = MovieGenre.History;
-                    return userGenre;
-                case 4:
-                    userGenre = MovieGenre.Drama;
-                    return userGenre;
-                case 5:
-                    userGenre = MovieGenre.Western;
-                    return userGenre;
-
-                default:
-                    break;
-            }
-
-            return 0;
-
-        }
-
-        /// <summary>
-        /// Input user Generated number to indicate what the classification is
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public MovieClassification FindClassification(int number)
-        {
-            MovieClassification userClassification;
-            switch (number)
-            {
-                case 1:
-                    userClassification = MovieClassification.G;
-                    return userClassification;
-                case 2:
-                    userClassification = MovieClassification.PG;
-                    return userClassification;
-                case 3:
-                    userClassification = MovieClassification.M;
-                    return userClassification;
-                case 4:
-                    userClassification = MovieClassification.M15Plus;
-                    return userClassification;
-
-
-                default:
-                    break;
-            }
-
-            return 0;
-
-        }
-
-
-        private static int GetInt(string prompt, int min, int max)
-        {
-            if (min > max)
-            {
-                int t = min;
-                min = max;
-                max = t;
-            }
-
-            while (true)
-            {
-                int result = GetInt(prompt);
-
-                if (min <= result && result <= max)
-                {
-                    return result;
-                }
-                else
-                {
-                    Error("Supplied value is out of range");
-                }
-            }
-        }
-
-        private static int GetInt(string prompt)
-        {
-            while (true)
-            {
-                string response = GetInput(prompt);
-
-                int result;
-
-                if (int.TryParse(response, out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    Error("Supplied value is not an integer");
-                }
-            }
-        }
-
-        private static string GetInput(string prompt)
-        {
-            Console.WriteLine("{0}:", prompt);
-            return Console.ReadLine();
-        }
-
-        private static void Error(string msg)
-        {
-            Console.WriteLine($"{msg}, please try again");
-            Console.WriteLine();
-        }
         #endregion
     }
 }

@@ -120,15 +120,6 @@ class MemberCollection : IMemberCollection
         int left = 0;
         int right = count - 1;
 
-        //while (left + 1 < right)
-        //{
-        //    int middle = (left + right) / 2;
-
-        //    if (members[middle].CompareTo((Member)member) == 0) { Console.WriteLine("Member Found!"); return true; }
-        //    if (members[middle].CompareTo((Member)member) == -1) { left = middle; }
-        //    if (members[middle].CompareTo((Member)member) == 1) { right = middle; }
-        //}
-
         while (left <= right)
         {
             int m = (left + right) / 2;
@@ -144,15 +135,6 @@ class MemberCollection : IMemberCollection
     {
         int left = 0;
         int right = count - 1;
-
-        //while (left + 1 < right)
-        //{
-        //    int middle = (left + right) / 2;
-
-        //    if (members[middle].CompareTo((Member)member) == 0) { Console.WriteLine("Member Found!"); return true; }
-        //    if (members[middle].CompareTo((Member)member) == -1) { left = middle; }
-        //    if (members[middle].CompareTo((Member)member) == 1) { right = middle; }
-        //}
 
         while (left <= right)
         {
