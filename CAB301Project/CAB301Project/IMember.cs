@@ -38,6 +38,8 @@ public interface IMember
         set; //pin must be valid 
     }
 
+    public List<Movie> Moives { get; set; }
+
     // Define how to comapre two member objects
     // This member's full name is compared to another member's full name 
     // Pre-condition: nil

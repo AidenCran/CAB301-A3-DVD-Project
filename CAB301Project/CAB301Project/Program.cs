@@ -205,10 +205,10 @@ namespace CAB301Project
             if (_memberCollection.Search(member))
             {
 
-               //memberCollection.
-               UserMember = _memberCollection.SearchMember(member);
-               
-
+                //memberCollection.
+                UserMember = _memberCollection.SearchMember(member);
+                
+                
             }
         }
 
@@ -348,9 +348,42 @@ namespace CAB301Project
             Console.WriteLine(output.ToString());
         }
 
-        void DisplayTopThree()
+        
+        // Print a string containing the top 3 most borrowed movies in descending order.
+        // Input: any array of movies. Does not have to be sorted.
+        public void DisplayTopBorrows()
         {
+            var array = _communityLibrary.ToArray();
+            IMovie first = new Movie("nil");
+            first.NoBorrowings = 0;
+            IMovie second = new Movie("nil");
+            second.NoBorrowings = 0;
+            IMovie third = new Movie("nil");
+            third.NoBorrowings = 0;
 
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i].NoBorrowings > first.NoBorrowings)
+                {
+                    third = second;
+                    second = first;
+                    first = array[i];
+                }
+                else if (array[i].NoBorrowings > second.NoBorrowings)
+                {
+                    third = second;
+                    second = array[i];
+                }
+                else if (array[i].NoBorrowings > third.NoBorrowings)
+                {
+                    third = array[i];
+                }
+            }
+
+            Console.WriteLine(first.Title + ": borrowed " + first.NoBorrowings + " times");
+            Console.WriteLine(second.Title + ": borrowed " + second.NoBorrowings + " times");
+            Console.WriteLine(third.Title + ": borrowed " + third.NoBorrowings + " times");
+            Console.WriteLine();
         }
 
         #endregion

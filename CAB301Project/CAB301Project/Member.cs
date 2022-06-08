@@ -1,6 +1,7 @@
 ﻿//CAB301 assessment 1 - 2022
 //The implementation of Member ADT
 using System;
+using System.Collections.Generic;
 
 public class Member : IMember
 {
@@ -17,6 +18,7 @@ public class Member : IMember
     public string ContactNumber { get { return contactNumber; } set { contactNumber = value; } }  // Get and set the contact number of this member
     public string Pin { get { return pin; } set { pin = value; } }// Get and set a pin number
 
+    public List<Movie> Moives { get; set; }
 
     
     // Constructor with member's first name and lastname

@@ -76,6 +76,8 @@ public class Movie : IMovie
         availablecopies--;
         noborrows++;
 
+        member.Moives.Add(this);
+
         return true;
     }
 
@@ -91,6 +93,9 @@ public class Movie : IMovie
         // Else Borrower Is In The List
         borrowers.Delete(member);
         availablecopies++;
+
+        member.Moives.Remove(this);
+
         return true;
     }
 
