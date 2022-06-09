@@ -18,15 +18,15 @@ namespace CAB301Project
             Program program = new Program();
             
             // Default User - Testing
-            Member defaultUser = new Member("Aiden", "Cran", "0432873948", "12345");
-            program._memberCollection.Add(defaultUser);
+            //Member defaultUser = new Member("Aiden", "Cran", "0432873948", "12345");
+            //program._memberCollection.Add(defaultUser);
 
-            Movie A = new Movie("A", MovieGenre.Action, MovieClassification.G, 10, 10);
-            Movie B = new Movie("B", MovieGenre.Action, MovieClassification.G, 10, 10);
-            Movie C = new Movie("C", MovieGenre.Action, MovieClassification.G, 10, 10);
+            //Movie A = new Movie("A", MovieGenre.Action, MovieClassification.G, 10, 10);
+            //Movie B = new Movie("B", MovieGenre.Action, MovieClassification.G, 10, 10);
+            //Movie C = new Movie("C", MovieGenre.Action, MovieClassification.G, 10, 10);
 
-            Member MA = new Member("A", "A");
-            Member MB = new Member("B", "B");
+            //Member MA = new Member("A", "A");
+            //Member MB = new Member("B", "B");
 
             //A.AddBorrower(MA);
             //A.AddBorrower(MB);
@@ -34,9 +34,9 @@ namespace CAB301Project
             //B.AddBorrower(MA);
             //C.AddBorrower(MA);
 
-            program._communityLibrary.Insert(A);
-            program._communityLibrary.Insert(B);
-            program._communityLibrary.Insert(C);
+            //program._communityLibrary.Insert(A);
+            //program._communityLibrary.Insert(B);
+            //program._communityLibrary.Insert(C);
 
             program.Run();
         }
@@ -152,9 +152,6 @@ namespace CAB301Project
             Console.Clear();
 
             Menu submenu = new Menu();
-            //UserInterface.Message("Please Enter Movie Title");
-
-            //IMovie titleSearch = _communityLibrary.Search(Console.ReadLine());
             string title = UserInterface.GetInput("Please Enter Movie Title");
             IMovie titleSearch = _communityLibrary.Search(title);
 
@@ -208,9 +205,9 @@ namespace CAB301Project
         public void RemoveMovie()
         {
             Console.Clear();
-            UserInterface.Message("Please enter in the title of the DVD you want to remove");
+            var result = UserInterface.GetInput("Please enter in the title of the DVD you want to remove");
 
-            IMovie movie = _communityLibrary.Search(Console.ReadLine());
+            IMovie movie = _communityLibrary.Search(result);
 
             //===========WARNING==================
             //May need to alter the total copies instead of available copies
@@ -225,7 +222,9 @@ namespace CAB301Project
             else if (movie == null)
             {
                 UserInterface.Error("Movie Does not exists");
+                return;
             }
+            
             if (movie.AvailableCopies == 0)
             {
                 UserInterface.SuccessfulAction($"Movie {movie.Title} has been removed");
