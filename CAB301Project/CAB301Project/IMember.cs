@@ -38,7 +38,7 @@ public interface IMember
         set; //pin must be valid 
     }
 
-    public List<Movie> Moives { get; set; }
+    public List<IMovie> Moives { get; }
 
     // Define how to comapre two member objects
     // This member's full name is compared to another member's full name 
@@ -61,10 +61,9 @@ public interface IMember
         // Validate Numerical Values
         foreach (var digit in phoneNumber)
         {
-            if (!char.IsNumber(digit)) { Console.WriteLine("Invalid Phone Number"); return false; }
+            if (!char.IsNumber(digit)) { return false; }
         }
 
-        Console.WriteLine("Valid Phone Number");
         return true;
     }
 
@@ -79,10 +78,9 @@ public interface IMember
         // Validate Numerical Values
         foreach (var digit in pin)
         {
-            if (!char.IsNumber(digit)) { Console.WriteLine("Invalid Pin"); return false; }
+            if (!char.IsNumber(digit)) { return false; }
         }
 
-        Console.WriteLine("Valid Pin");
         return true;
     }
 

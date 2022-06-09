@@ -16,10 +16,27 @@ namespace CAB301Project
         static void Main(string[] args)
         {
             Program program = new Program();
+            
+            // Default User - Testing
+            Member defaultUser = new Member("Aiden", "Cran", "0432873948", "12345");
+            program._memberCollection.Add(defaultUser);
 
-            program._communityLibrary.Insert(new Movie("A"));
-            program._communityLibrary.Insert(new Movie("B"));
-            program._communityLibrary.Insert(new Movie("C"));
+            Movie A = new Movie("A", MovieGenre.Action, MovieClassification.G, 10, 10);
+            Movie B = new Movie("B", MovieGenre.Action, MovieClassification.G, 10, 10);
+            Movie C = new Movie("C", MovieGenre.Action, MovieClassification.G, 10, 10);
+
+            Member MA = new Member("A", "A");
+            Member MB = new Member("B", "B");
+
+            //A.AddBorrower(MA);
+            //A.AddBorrower(MB);
+
+            //B.AddBorrower(MA);
+            //C.AddBorrower(MA);
+
+            program._communityLibrary.Insert(A);
+            program._communityLibrary.Insert(B);
+            program._communityLibrary.Insert(C);
 
             program.Run();
         }
@@ -35,8 +52,8 @@ namespace CAB301Project
 
             Console.WriteLine("======================= Main Menu ======================\n");
 
-            _menu.Add("Staff Login", DisplayStaffMember);
-            _menu.Add("Member Login", DisplayMember);
+            _menu.Add("Staff Login", StaffLogin);
+            _menu.Add("Member Login", MemberLogin);
             _menu.Add("Exit", () => Environment.Exit(0));
 
             DisplayMainMenu();
@@ -54,7 +71,6 @@ namespace CAB301Project
         public void DisplayStaffMember()
         {
             Menu submenu = new Menu();
-            Console.Clear();
             UserInterface.Message("====================Staff Menu=======================");
 
             submenu.Add("Add new DVDs of new movie to the system", AddMovie);
@@ -68,10 +84,55 @@ namespace CAB301Project
             submenu.Display();
         }
 
+        void StaffLogin()
+        {
+            // In Task Specification, Staff Login is distinctly different to Member Login.
+            // To accommodate this method is hardcoded.
+
+            string username = UserInterface.GetInput("Please Enter Your Username");
+            string password = UserInterface.GetPassword("Please Enter The Password");
+
+            if (username == "staff" && password == "today123")
+            {
+                Console.Clear();
+                UserInterface.SuccessfulAction("Welcome Staff!");
+                DisplayStaffMember();
+            }
+            else
+            {
+                DisplayInvalidInput(StaffLogin, "Login Details Incorrect");
+            }
+        }
+
+        public void MemberLogin()
+        {
+            Console.Clear();
+
+            string firstName = UserInterface.GetInput("Please Enter Your First Name");
+            string lastName = UserInterface.GetInput("Please Enter Your Last Name");
+
+            string pin = UserInterface.GetPassword("Please Enter Your Pin");
+
+            var member = _memberCollection.SearchMember(new Member(firstName, lastName));
+            if (member != null)
+            {
+                if (member.Pin == pin)
+                {
+                    Console.Clear();
+                    _currentUser = member;
+                    UserInterface.SuccessfulAction($"Login Succesful, Welcome {firstName} {lastName}!");
+                    DisplayMember();
+                }
+            }
+            else
+            {
+                DisplayInvalidInput(MemberLogin, "Login Details Incorrect");
+            }
+        }
+
         public void DisplayMember()
         {
             Menu submenu = new Menu();
-            Console.Clear();
             UserInterface.Message("====================Member Menu=======================");
 
             submenu.Add("Browse all the movies", DisplayAllDVDs);
@@ -79,8 +140,7 @@ namespace CAB301Project
             submenu.Add("Borrow a movie DVD", MemberBorrowMovie);
             submenu.Add("Return a movie DVD", MemberReturnMovie);
             submenu.Add("List current borrowing movies", MemberDisplayBorrowedMovies);
-            // \/ \/ \/ \/ \/
-            submenu.Add("Display the top 3 movies rented by the members", _menu.Display);
+            submenu.Add("Display the top 3 movies rented by the members", DisplayTopBorrows);
             submenu.Add("Return to the main menu", _menu.Display);
 
             submenu.Display();
@@ -92,10 +152,12 @@ namespace CAB301Project
             Console.Clear();
 
             Menu submenu = new Menu();
-            UserInterface.Message("Please Enter Movie Title");
+            //UserInterface.Message("Please Enter Movie Title");
 
-            IMovie titleSearch = _communityLibrary.Search(Console.ReadLine());
-            
+            //IMovie titleSearch = _communityLibrary.Search(Console.ReadLine());
+            string title = UserInterface.GetInput("Please Enter Movie Title");
+            IMovie titleSearch = _communityLibrary.Search(title);
+
             if (titleSearch != null)
             {
                 UserInterface.Message($"DVD {titleSearch} exists!");
@@ -107,7 +169,6 @@ namespace CAB301Project
             else
             {
                 MovieGenre selectedGenre = new MovieGenre();
-                UserInterface.Message("Please Select a Genre");
                 Menu genreMenu = new Menu();
                 genreMenu.Add("Action", ()=> selectedGenre = MovieGenre.Action);
                 genreMenu.Add("Comedy", ()=> selectedGenre = MovieGenre.Comedy);
@@ -116,9 +177,9 @@ namespace CAB301Project
                 genreMenu.Add("Western", ()=> selectedGenre = MovieGenre.Western);
                 genreMenu.Display();
 
+                UserInterface.SuccessfulAction("Selected: " + selectedGenre.ToString());
 
                 MovieClassification selectedClass = new MovieClassification();
-                UserInterface.Message("Please Select a Classification");
                 Menu classMenu = new Menu();
                 classMenu.Add("G", ()=> selectedClass = MovieClassification.G);
                 classMenu.Add("PG", ()=> selectedClass = MovieClassification.PG);
@@ -126,12 +187,13 @@ namespace CAB301Project
                 classMenu.Add("M15 Plus", ()=> selectedClass = MovieClassification.M15Plus);
                 classMenu.Display();
 
+                UserInterface.SuccessfulAction("Selected: " + selectedClass.ToString());
 
                 int userDurationInt = UserInterface.GetInteger("Please enter Duration of the DVD");
                 int userTotalCopiesInt = UserInterface.GetInteger("Please enter Total Copies of DVD");
 
                 //Add the movie
-                var movie = new Movie(titleSearch.Title, selectedGenre, selectedClass, userDurationInt, userTotalCopiesInt);
+                var movie = new Movie(title, selectedGenre, selectedClass, userDurationInt, userTotalCopiesInt);
                 _communityLibrary.Insert(movie);
 
 
@@ -139,6 +201,8 @@ namespace CAB301Project
                 string movieResult = movie.ToString();
                 UserInterface.SuccessfulAction($"\n{movieResult} has been added");   
             }
+
+            DisplayStaffMember();
         }
 
         public void RemoveMovie()
@@ -167,87 +231,97 @@ namespace CAB301Project
                 UserInterface.SuccessfulAction($"Movie {movie.Title} has been removed");
                 _communityLibrary.Delete(movie);
             }
+
+            DisplayStaffMember();
         }
 
         public void RegisterMember()
         {
             Console.Clear();
 
-            Console.WriteLine("Please Enter a Firstname");
-            string userFirstName = Console.ReadLine();
-            Console.WriteLine("Please Enter a Lastname");
-            string userLastName = Console.ReadLine();
-            Console.WriteLine("Please enter a correct Phone number");
-            string userPhonenumber = Console.ReadLine();
-            Console.WriteLine("Please enter a password");
-            string userPassword = Console.ReadLine();
+            string userFirstName = UserInterface.GetInput("Please Enter a Firstname");
+            string userLastName = UserInterface.GetInput("Please Enter a Lastname");
+            string userPhonenumber = UserInterface.GetInput("Please enter a correct Phone number");
+            string userPassword = UserInterface.GetPassword("Please enter a password");
 
             if (!IMember.IsValidContactNumber(userPhonenumber) || !IMember.IsValidPin(userPassword))
             {
-                DisplayInvalidInput(RegisterMember);
+                DisplayInvalidInput(RegisterMember, "Phone Number OR Pin Invalid");
             }
             
             var member = new Member(userFirstName, userLastName, userPhonenumber, userPassword);
+            
             _memberCollection.Add(member);
             UserInterface.SuccessfulAction($"Member {userFirstName} {userLastName} has been added to database");
+
+            DisplayStaffMember();
         }
 
         public void RemoveMember()
         {
-            Console.WriteLine("Please Enter the first name of the member being removed");
-            string UserInputFirstName = Console.ReadLine();
-            Console.WriteLine("Please Enter the last name of the member being removed");
-            string UserInputLastName = Console.ReadLine();
+            string UserInputFirstName = UserInterface.GetInput("Please Enter Member's First Name");
+
+            string UserInputLastName = UserInterface.GetInput("Please Enter Member's Last Name");
 
             IMember member = new Member(UserInputFirstName, UserInputLastName);
-            Member UserMember;
-            //memberCollection.Search(member);
-            if (_memberCollection.Search(member))
-            {
 
-                //memberCollection.
-                UserMember = _memberCollection.SearchMember(member);
-                
-                
-            }
+            Console.Clear();
+            _memberCollection.Delete(member);
+
+            DisplayStaffMember();
         }
 
         public void DisplayMembersPhoneNumber()
         {
-            //Firstname Prompt
-            string FirstNamePrompt = "Please enter the members firstname";
-            string userFirstName = UserInterface.GetInput(FirstNamePrompt);
-            
-            //Lastname Prompt
-            string LastNamePrompt = "Please enter the members Lastname";
-            string userLastName = UserInterface.GetInput(LastNamePrompt);
+            string userFirstName = UserInterface.GetInput("Please Enter The Member's First Name");
+            string userLastName = UserInterface.GetInput("Please Enter The Member's Last Name");
             
             //make a object to search for
             IMember member = new Member(userFirstName, userLastName);
             
             //this new object equals found object
             Member userMember = _memberCollection.SearchMember(member);
-            
-            //Display PhoneNumber
-            Console.WriteLine($"The members Contact number is {userMember.ContactNumber}");
+
+            Console.Clear();
+
+            if (userMember == null)
+            {
+                DisplayInvalidInput(DisplayMembersPhoneNumber, "Member Not Found!");
+            }
+            else
+            {
+                //Display PhoneNumber
+                UserInterface.SuccessfulAction($"The members Contact number is {userMember.ContactNumber}");
+            }
+
+            DisplayStaffMember();
         }
 
         public void DisplayMembersRentingMovie()
         {
-            string movieTitlePrompt = "Please enter the title of the movie you wish to view";
-            string movieTitle = UserInterface.GetInput(movieTitlePrompt);
+            string movieTitle = UserInterface.GetInput("Please enter the title of the movie you wish to view");
             IMovie movie = _communityLibrary.Search(movieTitle);
 
             if (movie == null)
             {
-                UserInterface.Error("That movie doesnt exist");
+                DisplayInvalidInput(DisplayMembersRentingMovie, "That movie doesnt exist");
+                return;
             }
             else
             {
-                //this may not work. might only return one name at the top of borrowers
-                //will need fixing
-                movie.Borrowers.ToString();
+                Console.Clear();
+                var output = movie.Borrowers.ToString();
+                if (string.IsNullOrEmpty(output))
+                {
+                    UserInterface.Error("No one is renting this movie");
+                }
+                else
+                {
+                    UserInterface.Message(output);
+                }
             }
+
+            DisplayStaffMember();
         }
 
 
@@ -260,10 +334,8 @@ namespace CAB301Project
         /// </summary>
         void DisplayAllDVDs()
         {
-            Menu submenu = new Menu();
-            StringBuilder output = new StringBuilder();
-
             Console.Clear();
+            StringBuilder output = new StringBuilder();
 
             output.AppendLine("All Catalogued DVDs in Alphabetical Order\n");
 
@@ -273,6 +345,7 @@ namespace CAB301Project
             }
 
             UserInterface.Message(output.ToString());
+            DisplayMember();
         }
 
         /// <summary>
@@ -283,13 +356,14 @@ namespace CAB301Project
             Menu submenu = new Menu();
             Console.Clear();
 
-            UserInterface.Message("Please Insert a Movie Title");
+            string title = UserInterface.GetInput("Please Insert a Movie Title");
 
-            string title = Console.ReadLine();
             IMovie movie = _communityLibrary.Search(title);
 
             if (movie == null)  { DisplayInvalidInput(DisplayMovieInfo); }
             else                { UserInterface.Message("\n" + movie.ToString()); }
+
+            DisplayMember(); 
         }
 
         /// <summary>
@@ -300,15 +374,43 @@ namespace CAB301Project
             Menu submenu = new Menu();
             Console.Clear();
 
+            StringBuilder output = new StringBuilder();
+
+            foreach (var item in _communityLibrary.ToArray())
+            {
+                if (!item.Borrowers.Search(_currentUser))
+                {
+                    output.AppendLine(item.ToString());
+                }
+            }
+
+            if (string.IsNullOrEmpty(output.ToString()))
+            {
+                UserInterface.Error("There are no unique movies avaliable to borrow!");
+                DisplayMember();
+                return;
+            }
+
             UserInterface.Message("Please Enter a Title to Borrow");
 
-            DisplayAllDVDs();
+            UserInterface.Message(output.ToString());
 
             string title = Console.ReadLine();
             IMovie movie = _communityLibrary.Search(title);
 
-            if (movie == null)  { DisplayInvalidInput(MemberBorrowMovie); }
-            else                { movie.AddBorrower(_currentUser); }
+            if (movie == null) { DisplayInvalidInput(MemberBorrowMovie); }
+            else if (!_currentUser.Moives.Contains(movie))
+            {
+                Console.Clear();
+                UserInterface.SuccessfulAction("Movie Borrowed!");
+                movie.AddBorrower(_currentUser);
+            }
+            else
+            {
+                Console.Clear();
+                UserInterface.Error("You're already borrowing that movie");
+            }
+            DisplayMember();
         }
 
         /// <summary>
@@ -319,15 +421,39 @@ namespace CAB301Project
             Menu submenu = new Menu();
             Console.Clear();
 
+            StringBuilder output = new StringBuilder();
+
+            foreach (var item in _currentUser.Moives)
+            {
+                if (item.Borrowers.Search(_currentUser))
+                {
+                    output.AppendLine(item.ToString());
+                }
+            }
+
+            if (string.IsNullOrEmpty(output.ToString()))
+            {
+                UserInterface.Error("You're not borrowing any movies!");
+                DisplayMember();
+                return;
+            }
+
             UserInterface.Message("Please Enter a Title to Return");
 
-            DisplayAllDVDs();
+            UserInterface.Message(output.ToString());
 
             string title = Console.ReadLine();
             IMovie movie = _communityLibrary.Search(title);
 
             if (movie == null)  { DisplayInvalidInput(MemberReturnMovie); }
-            else                { movie.RemoveBorrower(_currentUser); }
+            else if (_currentUser.Moives.Contains(movie))
+            {
+                Console.Clear();
+                UserInterface.SuccessfulAction("Movie Returned!");
+                movie.RemoveBorrower(_currentUser);
+            }
+
+            DisplayMember();
         }
 
         /// <summary>
@@ -337,7 +463,7 @@ namespace CAB301Project
         {
             StringBuilder output = new StringBuilder();
 
-            foreach (var movie in _communityLibrary.ToArray())
+            foreach (var movie in _currentUser.Moives)
             {
                 if (movie.Borrowers.Search(_currentUser))
                 {
@@ -345,7 +471,19 @@ namespace CAB301Project
                 }
             }
 
-            Console.WriteLine(output.ToString());
+            Console.Clear();
+
+            if (string.IsNullOrEmpty(output.ToString()))
+            {
+                UserInterface.Error("You're Currently not borrowing any movies!");
+            }
+            else
+            {
+                Console.WriteLine("Currently Borrowing:");
+                Console.WriteLine(output.ToString());
+            }
+
+            DisplayMember();
         }
 
         
@@ -380,20 +518,24 @@ namespace CAB301Project
                 }
             }
 
+            Console.Clear();
+
             Console.WriteLine(first.Title + ": borrowed " + first.NoBorrowings + " times");
             Console.WriteLine(second.Title + ": borrowed " + second.NoBorrowings + " times");
             Console.WriteLine(third.Title + ": borrowed " + third.NoBorrowings + " times");
             Console.WriteLine();
+
+            DisplayMember();
         }
 
         #endregion
 
         #region Utility
 
-        void DisplayInvalidInput(Action action)
+        void DisplayInvalidInput(Action action, string prompt = "Object Not Found!")
         {
             Menu submenu = new Menu();
-            UserInterface.Error("Object Not Found!");
+            UserInterface.Error("\n" + prompt);
 
             submenu.Add("Retry", action);
             submenu.Add("Return", _menu.Display);

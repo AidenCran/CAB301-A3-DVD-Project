@@ -101,6 +101,7 @@ class MemberCollection : IMemberCollection
 
             members[i] = null;
             count--;
+            UserInterface.SuccessfulAction("Member Removed!");
 
             for (int j = i+1; j < members.Length; j++)
             {
